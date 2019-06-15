@@ -1,0 +1,25 @@
+.header {
+    height: 100px;
+    width: 200px;
+    background-color: lightskyblue;
+    text-align: center;
+    font-weight: bold;
+}
+h1 {
+    font-size: 20px;
+    text-align: left;
+}
+h2 {
+font-weight: bold;
+height: relative;
+width: relative; 
+background-color: violet;
+color: white;
+}
+
+button {
+background-color: purple;
+color: white;
+text-align: center;
+border-color: purple;
+}
