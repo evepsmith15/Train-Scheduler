@@ -1,6 +1,6 @@
 .header {
-    height: 100px;
-    width: 200px;
+    height: relative;
+    width: relative;
     background-color: lightskyblue;
     text-align: center;
     font-weight: bold;
@@ -13,8 +13,10 @@ h2 {
 font-weight: bold;
 height: relative;
 width: relative; 
+text-align: center;
 background-color: violet;
 color: white;
+margin: 0;
 }
 
 button {
@@ -22,4 +24,12 @@ background-color: purple;
 color: white;
 text-align: center;
 border-color: purple;
+}
+
+th {
+    background-color: salmon;
+}
+
+body {
+    margin: 5%;
 }

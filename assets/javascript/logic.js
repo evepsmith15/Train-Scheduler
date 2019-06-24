@@ -23,43 +23,56 @@ $(document).ready(function () {
   //add train on click
   $("#add-train").on("click", function () {
     event.preventDefault();
-    name = $("Train-Name").val().trim();
-    destination = $("destination").val().trim();
-    firstTrain = $("First-Train").val().trim();
+    name = $("#Train-Name").val().trim();
+    destination = $("#Destination").val().trim();
+    firstTrain = $("#First-Train").val().trim();
     frequency = $("#Frequency").val().trim();
+
+ 
+    var pushedObject = {
+      name: name,
+      destination: destination,
+      firstTrain: firstTrain,
+      frequency: frequency,
+      recentDate: firebase.database.ServerValue.TIMESTAMP //A placeholder value for auto-populating the current timestamp
+    };
+    console.log("TIMESTAMP FROM SERVER - " + (pushedObject.recentDate));
+    database.ref().push(pushedObject);
+  $("input")[0].reset(); //after putting the data into the table marked as input, the database resets to a blank state
 
   })
   //code for pushingto the database 
-  database.ref().push({
-    name: name,
-    destination: destination,
-    firstTrain: firstTrain,
-    frequency: frequency,
-    recentDate: firebase.database.ServerValue.TIMESTAMP //A placeholder value for auto-populating the current timestamp
-  });
-  $("input")[0].reset(); //after putting the data into the table marked as input, the database resets to a blank state
-})
+  
 //code for the database reference 
-database.ref().on("child_added", function(dataSnapshot) {
+database.ref().on("child_added", function(childSnapshot) {
   var NextMin;
   //a year is added to show the difference
-  var NewTrainTime = moment(dataSnapshot.val().firstTrain, "hh:mm").subtract(1, "years");
+  var NewTrainTime = moment(childSnapshot.val().firstTrain, "hh:mm").subtract(1, "years");
+  console.log("NewTrainTime: " + NewTrainTime);
+
   //Difference between the current train and the first train
-  var DiffTime = moment().diff(moment(NewTrainTime), "minutes");
-  //takes the difference in time by the dataSnapShot value and frequency
-  var remainder = DiffTime % dataSnapshot.val().frequency;
+  var timeNow = moment();
+  var DiffTime = timeNow.diff((moment((NewTrainTime))))
+  console.log("DiffTime: " + DiffTime);
+
+    //takes the difference in time by the dataSnapShot value and frequency
+  var remainder = DiffTime % childSnapshot.val().frequency;
+  console.log("remainder: " + remainder);
+
   //Minutes until next train
-  var NextMin = dataSnapshot.val().frequency - remainder;
+  var NextMin = (childSnapshot.val().frequency - remainder);
+  console.log("NextMin: " + childSnapshot.val().frequency);
   //equation for next train time
   var nextTrain = moment().add(NextMin, "minutes");
-  nextTrain = moment(nextTrain).format("hh:mm");
+  nextTrain = moment(nextTrain).format('LLL');
+  console.log("nextTrain: " + nextTrain);
 
   //need to add a row on its own with arrays instead of doing them manually 
-  $("#add-row").append("<tr><td>" + dataSnapshot.val().name +
-    "</td><td>" + dataSnapshot.val().destination +
-    "</td><td>" + dataSnapshot.val().frequency +
-    "</td><td>" + dataSnapshot.val().nextTrain +
-    "</td><td>" + dataSnapshot.val().NextMin +
+  $("#add-row").append("<tr><td>" + childSnapshot.val().name +
+    "</td><td>" + childSnapshot.val().destination +
+    "</td><td>" + childSnapshot.val().frequency +
+    "</td><td>" + nextTrain +
+    "</td><td>" + NextMin +
     "</td></tr>");
 },
   // error messages in case something goes wrong in the code 
@@ -67,6 +80,6 @@ database.ref().on("child_added", function(dataSnapshot) {
     console.log("Error handled: " + errorObject.code);
   });
 
-
+})
 //I used this website for reference https://firebase.google.com/docs/database/web/lists-of-data
 //and this website https://firebase.google.com/docs/reference/js/firebase.database.DataSnapshot
